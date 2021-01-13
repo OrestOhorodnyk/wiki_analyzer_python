@@ -2,6 +2,9 @@
 ### docker run command 
 docker run -d --name timescaledb -p 5432:5432 -e POSTGRES_PASSWORD=password timescale/timescaledb:2.0.0-pg12
 
+### Terminal websocket client
+`https://github.com/vi/websocat`
+
 
 ### 1. Get all Recent Changes as a realtime stream
 `ws://0.0.0.0:8000/recent_change`
