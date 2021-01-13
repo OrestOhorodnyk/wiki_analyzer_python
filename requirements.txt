@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+loguru
+
+requests
+pydantic
+websockets
+
+aiohttp-sse-client
+sse-starlette
+
+
+aiopg
+aiopg[sa]
