@@ -6,7 +6,11 @@ from sqlalchemy_filters import apply_filters
 db = SessionLocal()
 
 
-def get_most_active_user(year: int = None, month: int = None, day=None):
+async def get_user_list():
+    return db.query(UserContributes.user.distinct()).all()
+
+
+async def get_most_active_user(year: int = None, month: int = None, day=None):
     query_params = {
         "year": year,
         "month": month,

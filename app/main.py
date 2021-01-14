@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title='Master App log', debug=False)
+    app = FastAPI(title='Wiki analyzer', debug=False)
     logger = CustomizeLogger.make_logger()
     app.logger = logger
     app.include_router(router)

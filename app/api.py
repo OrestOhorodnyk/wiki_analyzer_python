@@ -6,7 +6,10 @@ from sse_starlette.sse import EventSourceResponse
 from websockets.exceptions import ConnectionClosed
 
 from app.stream.recent_changes import get_stream
-from app.user_contribytes_service import get_most_active_user
+from app.user_contribytes_service import (
+    get_most_active_user,
+    get_user_list,
+)
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -24,9 +27,14 @@ async def get_messages():
     return EventSourceResponse(events)
 
 
+@router.get("/user_list", status_code=200)
+async def get_users():
+    return await get_user_list()
+
+
 @router.get("/most_active_user/")
 async def most_active_user(year: Optional[int] = None, month: Optional[int] = None, day: Optional[int] = None):
-    result = get_most_active_user(year, month, day)
+    result = await get_most_active_user(year, month, day)
     if result:
         return {
             "User Name": result[0],
