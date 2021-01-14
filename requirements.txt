@@ -12,3 +12,4 @@ sse-starlette
 
 aiopg
 aiopg[sa]
+sqlalchemy-filters

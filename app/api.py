@@ -1,13 +1,12 @@
 import logging
-from datetime import datetime
-from app.stream.recent_changes import get_stream
-from fastapi import (
-    APIRouter,
-    HTTPException,
-    BackgroundTasks,
-)
+from typing import Optional
+
+from fastapi import APIRouter
 from sse_starlette.sse import EventSourceResponse
 from websockets.exceptions import ConnectionClosed
+
+from app.stream.recent_changes import get_stream
+from app.user_contribytes_service import get_most_active_user
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -19,10 +18,24 @@ async def status():
 
 
 @router.get("/start", status_code=200)
-async def append_msg(background_tasks: BackgroundTasks):
+async def get_messages():
     events = get_stream("https://stream.wikimedia.org/v2/stream/recentchange")
 
     return EventSourceResponse(events)
+
+
+@router.get("/most_active_user/")
+async def most_active_user(year: Optional[int] = None, month: Optional[int] = None, day: Optional[int] = None):
+    result = get_most_active_user(year, month, day)
+    if result:
+        return {
+            "User Name": result[0],
+            "Activity count": result[1],
+            "Activity year": result[2],
+            "Activity month": result[3],
+            "Activity date": result[4],
+        }
+    return 'Not found',
 
 
 @router.websocket_route("/recent_change")

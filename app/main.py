@@ -1,14 +1,15 @@
 import asyncio
 import logging
-from app.constants import USER_CONTRIBUTES_REQUIRED_FIELDS
+from datetime import datetime
+
 import uvicorn
-from fastapi import FastAPI, Depends
-from sqlalchemy.orm import Session
+from fastapi import FastAPI
+
 from app.api import router
+from app.constants import USER_CONTRIBUTES_REQUIRED_FIELDS
 from app.db import models
 from app.db.database import SessionLocal, engine
 from app.logger.costum_logging import CustomizeLogger
-from datetime import datetime
 from app.stream.recent_changes import get_stream
 
 logger = logging.getLogger(__name__)
@@ -26,12 +27,6 @@ models.Base.metadata.create_all(bind=engine)
 app = create_app()
 
 
-async def random_n():
-    for i in range(100000):
-        print(i)
-        await asyncio.sleep(5)
-
-
 # Dependency
 def get_db():
     db = SessionLocal()
@@ -41,7 +36,7 @@ def get_db():
         db.close()
 
 
-async def create_user():
+async def load_user_contributes():
     db = SessionLocal()
     events = get_stream("https://stream.wikimedia.org/v2/stream/recentchange")
     async for event in events:
@@ -61,8 +56,8 @@ async def create_user():
 
 @app.on_event("startup")
 async def startup_event():
-    create_user()
-    task = asyncio.create_task(create_user())
+    load_user_contributes()
+    task = asyncio.create_task(load_user_contributes())
     logger.info("STARTED")
 
 

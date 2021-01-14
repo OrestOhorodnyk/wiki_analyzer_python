@@ -1,7 +1,28 @@
-from sqlalchemy import Column, String, TIMESTAMP, BOOLEAN, NUMERIC
-from sqlalchemy.dialects.postgresql import UUID
+from random import randint
 from uuid import uuid4
+
+from sqlalchemy import Column, String, TIMESTAMP, BOOLEAN, NUMERIC, Integer
+from sqlalchemy.dialects.postgresql import UUID
+
 from app.db.database import Base
+
+
+def get_year(context):
+    ts = context.get_current_parameters()['timestamp']
+    if ts:
+        return randint(2000, ts.year)
+
+
+def get_month(context):
+    ts = context.get_current_parameters()['timestamp']
+    if ts:
+        return randint(ts.month, 12)
+
+
+def get_day(context):
+    ts = context.get_current_parameters()['timestamp']
+    if ts:
+        return randint(ts.day, 30)
 
 
 class UserContributes(Base):
@@ -17,3 +38,29 @@ class UserContributes(Base):
     user = Column(String, nullable=True, unique=False, index=True)
     bot = Column(BOOLEAN, nullable=True, unique=False, index=False)
     minor = Column(BOOLEAN, unique=False, index=False)
+    # timestamp parsed to year, month, day
+    year = Column(Integer, nullable=True, unique=False, default=get_year)
+    month = Column(Integer, nullable=True, unique=False, default=get_month)
+    day = Column(Integer, nullable=True, unique=False, default=get_day)
+
+    def __repr__(self):
+        return str({
+            "id_sk": self.id_sk,
+            "id": self.id,
+            "type": self.type,
+            "namespace": self.namespace,
+            "title": self.title,
+            "comment": self.comment,
+            "timestamp": self.timestamp,
+            "user": self.user,
+            "bot": self.bot,
+            "minor": self.minor,
+            "year": self.year,
+            "month": self.month,
+            "day": self.day,
+        })
+
+    def get_user_info(self):
+        return {
+            "user": self.user,
+        }
