@@ -2,6 +2,10 @@
 ### docker run command 
 docker run -d --name timescaledb -p 5432:5432 -e POSTGRES_PASSWORD=password timescale/timescaledb:2.0.0-pg12
 
+
+### Swagger UI ``http://0.0.0.0:8000/docs``
+
+
 ### Terminal websocket client
 `https://github.com/vi/websocat`
 
@@ -15,6 +19,10 @@ send ``go`` to start streaming
 
 send  coma separated user list to start streaming 
 eg ``GÜT,Fnielsen,Lettler,Hammersoft,Gamaliel,Lettler,Srich32977,Bdijkstra,Vahurzpu,Bdijkstra,Rar``
+
+
+### 3 b. Topics to which user has contributed most
+eg curl -X GET "http://0.0.0.0:8000/topics_by_user/PhiliPpe%20rogeZ" -H  "accept: application/json"
 
 
 ### 4 Retrieve most active user during the (YEAR|MONTH|DAY)
