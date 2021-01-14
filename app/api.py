@@ -9,6 +9,7 @@ from app.stream.recent_changes import get_stream
 from app.user_contribytes_service import (
     get_most_active_user,
     get_user_list,
+    topics_by_user,
 )
 
 router = APIRouter()
@@ -30,6 +31,21 @@ async def get_messages():
 @router.get("/user_list", status_code=200)
 async def get_users():
     return await get_user_list()
+
+
+@router.get("/topics_by_user/{username}", status_code=200)
+async def get_topics_by_user(username: str):
+    topics = await topics_by_user(username)
+    result = []
+    for topic in topics:
+        result.append({
+            "user": topic[0],
+            "Article title": topic[1],
+            "Number of contribution": topic[2],
+        })
+
+    return result
+
 
 
 @router.get("/most_active_user/")

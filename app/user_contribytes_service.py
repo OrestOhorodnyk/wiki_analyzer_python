@@ -10,6 +10,23 @@ async def get_user_list():
     return db.query(UserContributes.user.distinct()).all()
 
 
+async def topics_by_user(username: str):
+    res = db.query(
+        UserContributes.user,
+        UserContributes.title,
+        func.count(UserContributes.id_sk)
+    ).filter(
+        UserContributes.user.ilike(f'%{username}%')
+    ).group_by(
+        UserContributes.user,
+        UserContributes.title
+    ).order_by(
+        func.count(UserContributes.id_sk).desc()
+    ).all()
+
+    return res
+
+
 async def get_most_active_user(year: int = None, month: int = None, day=None):
     query_params = {
         "year": year,
@@ -19,12 +36,13 @@ async def get_most_active_user(year: int = None, month: int = None, day=None):
 
     filter_spec = [{'field': k, 'op': '==', 'value': v} for k, v in query_params.items() if v]
 
-    query = db.query(UserContributes.user,
-                     func.count(UserContributes.user),
-                     func.array_agg(UserContributes.year),
-                     func.array_agg(UserContributes.month),
-                     func.array_agg(UserContributes.day),
-                     ).group_by(
+    query = db.query(
+        UserContributes.user,
+        func.count(UserContributes.user),
+        func.array_agg(UserContributes.year),
+        func.array_agg(UserContributes.month),
+        func.array_agg(UserContributes.day),
+    ).group_by(
         UserContributes.user,
     ).order_by(
         func.count(UserContributes.user).desc())
