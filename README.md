@@ -18,4 +18,4 @@ eg ``GÜT,Fnielsen,Lettler,Hammersoft,Gamaliel,Lettler,Srich32977,Bdijkstra,Vahu
 
 
 ### 4 Retrieve most active user during the (YEAR|MONTH|DAY)
-  curl -X GET "http://0.0.0.0:8000/most_active_user/?year=2021&month=2" -H  "accept: application/json"
+  ``curl -X GET "http://0.0.0.0:8000/most_active_user/?year=2021&month=2" -H  "accept: application/json"``
