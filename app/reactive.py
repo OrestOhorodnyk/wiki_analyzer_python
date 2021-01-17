@@ -2,6 +2,8 @@ import asyncio
 import logging
 
 from rx.subject import Subject
+from rx.scheduler.eventloop import IOLoopScheduler, AsyncIOScheduler
+from rx.core.notification import OnNext, OnError, OnCompleted
 from rx import operators as op
 from app.stream.recent_changes import get_stream
 from datetime import datetime
@@ -12,6 +14,7 @@ from app.constants import USER_CONTRIBUTES_REQUIRED_FIELDS
 
 logger = logging.getLogger(__name__)
 
+subject = Subject()
 
 def store_user_contributes(data: Dict) -> None:
     db = SessionLocal()
@@ -38,7 +41,6 @@ def transform_timestamp(data):
 
 
 def handle_source():
-    subject = Subject()
     asyncio.create_task(sse_observable(subject))
 
     base_transform_pipe = subject.pipe(
@@ -46,4 +48,27 @@ def handle_source():
         op.map(transform_timestamp)
     )
     base_transform_pipe.subscribe(store_user_contributes)
-    base_transform_pipe.subscribe(lambda data: logger.info(f"User: {data['user']} \nEdited article: {data['title']}"))
+    # base_transform_pipe.subscribe(lambda data: logger.info(f"User: {data['user']} \nEdited article: {data['title']}"))
+
+async def to_agen(obs):
+    queue = asyncio.Queue()
+
+    def on_next(i):
+        queue.put_nowait(i)
+
+    disposable = obs.pipe(op.materialize()).subscribe(
+        on_next=on_next,
+        scheduler=AsyncIOScheduler(loop=asyncio.get_event_loop())
+    )
+
+    while True:
+        i = await queue.get()
+        if isinstance(i, OnNext):
+            yield i.value
+            queue.task_done()
+        elif isinstance(i, OnError):
+            disposable.dispose()
+            raise(Exception(i.value))
+        else:
+            disposable.dispose()
+            break
