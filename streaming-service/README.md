@@ -1,6 +1,6 @@
 
 ### docker run command 
-docker run -d --name timescaledb -p 5432:5432 -e POSTGRES_PASSWORD=password timescale/timescaledb:2.0.0-pg12
+docker run -d --rm  --name timescaledb -p 5432:5432 -h localhost -e POSTGRES_PASSWORD=wiki -e POSTGRES_DB=wiki timescale/timescaledb:2.0.0-pg12
 
 
 ### Swagger UI ``http://0.0.0.0:8000/docs``

@@ -9,7 +9,8 @@ websockets
 aiohttp-sse-client
 sse-starlette
 
-
 aiopg
 aiopg[sa]
 sqlalchemy-filters
+
+rx

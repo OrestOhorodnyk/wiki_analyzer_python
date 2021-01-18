@@ -1,4 +1,5 @@
 import logging
+import asyncio
 from typing import Optional
 
 from fastapi import APIRouter
@@ -11,6 +12,7 @@ from app.user_contribytes_service import (
     get_user_list,
     topics_by_user,
 )
+from app.reactive import subject, to_agen
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -47,7 +49,6 @@ async def get_topics_by_user(username: str):
     return result
 
 
-
 @router.get("/most_active_user/")
 async def most_active_user(year: Optional[int] = None, month: Optional[int] = None, day: Optional[int] = None):
     result = await get_most_active_user(year, month, day)
@@ -82,6 +83,19 @@ async def recent_change(websocket):
     await websocket.close()
     logger.info("WEBSOKET CLOSED")
     logger.info(f"users: {','.join(user_set)}")
+
+
+@router.websocket_route("/recent_typos")
+async def recent_typos(websocket):
+    logger.info("WEBSOKET ACCEPT CONNECTION")
+    await websocket.accept()
+    async for event in to_agen(subject):
+        msg = 'Is minor: {minor} \n\n'.format(
+            minor=False if 'minor' not in event else event['minor']
+        )
+        await websocket.send_text(msg)
+    await websocket.close()
+    logger.info("WEBSOKET CLOSED")
 
 
 @router.websocket_route("/recent_change_by_users")
