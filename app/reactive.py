@@ -1,20 +1,22 @@
 import asyncio
 import logging
-
-from rx.subject import Subject
-from rx.scheduler.eventloop import IOLoopScheduler, AsyncIOScheduler
-from rx.core.notification import OnNext, OnError, OnCompleted
-from rx import operators as op
-from app.stream.recent_changes import get_stream
 from datetime import datetime
 from typing import Dict
-from app.db.database import SessionLocal, engine
-from app.db import models
+
+from rx import operators as op
+from rx.core.notification import OnNext, OnError
+from rx.scheduler.eventloop import AsyncIOScheduler
+from rx.subject import Subject
+
 from app.constants import USER_CONTRIBUTES_REQUIRED_FIELDS
+from app.db import models
+from app.db.database import SessionLocal
+from app.stream.recent_changes import get_stream
 
 logger = logging.getLogger(__name__)
 
 subject = Subject()
+
 
 def store_user_contributes(data: Dict) -> None:
     db = SessionLocal()
@@ -50,6 +52,7 @@ def handle_source():
     base_transform_pipe.subscribe(store_user_contributes)
     # base_transform_pipe.subscribe(lambda data: logger.info(f"User: {data['user']} \nEdited article: {data['title']}"))
 
+
 async def to_agen(obs):
     queue = asyncio.Queue()
 
@@ -68,7 +71,7 @@ async def to_agen(obs):
             queue.task_done()
         elif isinstance(i, OnError):
             disposable.dispose()
-            raise(Exception(i.value))
+            raise (Exception(i.value))
         else:
             disposable.dispose()
             break

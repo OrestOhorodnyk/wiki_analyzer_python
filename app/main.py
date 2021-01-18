@@ -1,10 +1,11 @@
 import logging
+
 import uvicorn
 from fastapi import FastAPI
 
 from app.api import router
 from app.db import models
-from app.db.database import SessionLocal, engine
+from app.db.database import engine
 from app.logger.costum_logging import CustomizeLogger
 from app.reactive import handle_source
 
@@ -21,15 +22,6 @@ def create_app() -> FastAPI:
 
 models.Base.metadata.create_all(bind=engine)
 app = create_app()
-
-
-# Dependency
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @app.on_event("startup")

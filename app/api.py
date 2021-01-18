@@ -49,7 +49,6 @@ async def get_topics_by_user(username: str):
     return result
 
 
-
 @router.get("/most_active_user/")
 async def most_active_user(year: Optional[int] = None, month: Optional[int] = None, day: Optional[int] = None):
     result = await get_most_active_user(year, month, day)
@@ -92,7 +91,7 @@ async def recent_typos(websocket):
     await websocket.accept()
     async for event in to_agen(subject):
         msg = 'Is minor: {minor} \n\n'.format(
-            minor = False if 'minor' not in event else event['minor']
+            minor=False if 'minor' not in event else event['minor']
         )
         await websocket.send_text(msg)
     await websocket.close()
