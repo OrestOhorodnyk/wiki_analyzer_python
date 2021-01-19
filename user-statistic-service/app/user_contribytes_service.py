@@ -1,5 +1,5 @@
 from app.db.database import SessionLocal
-from app.db.models import UserContributes
+from app.db.models import UserContributes, UserContributeByTitle, ArticleTitleCount
 from sqlalchemy import func
 from sqlalchemy_filters import apply_filters
 
@@ -23,6 +23,28 @@ async def topics_by_user(username: str):
     ).order_by(
         func.count(UserContributes.id_sk).desc()
     ).all()
+
+    return res
+
+
+async def topics_by_user_rx(username: str):
+    res = db.query(
+        UserContributeByTitle
+    ).filter(
+        UserContributes.user.ilike(f'%{username}%')
+    ).order_by(
+        UserContributeByTitle.count.desc()
+    ).first()
+
+    return res
+
+
+async def get_topic_typos_count():
+    res = db.query(
+        ArticleTitleCount
+    ).order_by(
+        ArticleTitleCount.count.desc()
+    ).limit(10).all()
 
     return res
 

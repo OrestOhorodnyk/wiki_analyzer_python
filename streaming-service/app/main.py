@@ -7,7 +7,11 @@ from app.api import router
 from app.db import models
 from app.db.database import engine
 from app.logger.costum_logging import CustomizeLogger
-from app.reactive import handle_source
+from app.reactive import (
+    handle_source,
+    user_contribute_pipeline,
+    title_pipeline,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +31,8 @@ app = create_app()
 @app.on_event("startup")
 async def startup_event():
     handle_source()
+    user_contribute_pipeline()
+    title_pipeline()
     logger.info("STARTED")
 
 

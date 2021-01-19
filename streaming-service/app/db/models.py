@@ -64,3 +64,18 @@ class UserContributes(Base):
         return {
             "user": self.user,
         }
+
+
+class UserContributeByTitle(Base):
+    __tablename__ = "users_contribute_by_title"
+
+    user = Column(String, primary_key=True)
+    title = Column(String, primary_key=True)
+    count = Column(Integer, nullable=True, unique=False)
+
+
+class ArticleTitleCount(Base):
+    __tablename__ = "article_title_count"
+
+    title = Column(String, primary_key=True)
+    count = Column(Integer, nullable=True, unique=False)
