@@ -75,6 +75,8 @@ services:
     build:
       context: ./timeseries-service
       dockerfile: Dockerfile
+    environment:
+      ENV: docker
     ports:
       - "${MY_DOCKER_IP:-127.0.0.1}:8003:8000"
 
