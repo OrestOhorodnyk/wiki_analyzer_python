@@ -46,6 +46,17 @@ eg ``GÜT,Fnielsen,Lettler,Hammersoft,Gamaliel,Lettler,Srich32977,Bdijkstra,Vahu
 
 # User-statistic-service
 
+### 3 a. Information about user contribution as a series of points over time.
+`curl -X GET "http://0.0.0.0:8003//chart/contribution/{username}?limit=100&granularity=hour" -H  "accept: application/json"`
+
+Available date granularities:
+* `year`
+* `month`
+* `day`
+* `hour`
+
+
+
 ### 3 b. Topics to which user has contributed most
 eg `curl -X GET "http://0.0.0.0:8000/topics_by_user/PhiliPpe%20rogeZ" -H  "accept: application/json"`
 or `curl -X GET "http://0.0.0.0:8000/topics_by_user_rx/PhiliPpe%20rogeZ" -H  "accept: application/json"` The same as previous but implemented on RxPy
