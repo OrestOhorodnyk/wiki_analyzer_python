@@ -1,5 +1,5 @@
 # wiki_analyzer_python
-
+![alt text](https://github.com/OrestOhorodnyk/wiki_analyzer_python/blob/master/diagram.jpg)
 
 ## Prerequisites
 * Docker and docker-compose installed

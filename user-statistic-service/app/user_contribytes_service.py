@@ -71,3 +71,13 @@ async def get_most_active_user(year: int = None, month: int = None, day=None):
 
     filtered_query = apply_filters(query, filter_spec)
     return filtered_query.first()
+
+
+async def get_contributes():
+    res = db.query(
+        UserContributes.user,
+        UserContributes.title,
+        UserContributes.minor
+    ).all()
+
+    return [{'user': x[0], 'title': x[1], 'minor': x[2]} for x in res]

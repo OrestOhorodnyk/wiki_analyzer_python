@@ -1,6 +1,7 @@
 import logging
 import asyncio
 from typing import Optional
+import rx
 
 from fastapi import APIRouter
 from sse_starlette.sse import EventSourceResponse
@@ -13,6 +14,7 @@ from app.user_contribytes_service import (
     topics_by_user,
     topics_by_user_rx,
     get_topic_typos_count,
+    get_contributes,
 )
 from app.reactive import subject, to_agen
 
@@ -103,6 +105,9 @@ async def recent_change(websocket):
 async def recent_typos(websocket):
     logger.info("WEBSOKET ACCEPT CONNECTION")
     await websocket.accept()
+    existing_rows = await get_contributes()
+    observable = rx.from_(existing_rows)
+    merged = rx.operators.merge(subject)
     async for event in to_agen(subject):
         msg = 'Is minor: {minor} \n\n'.format(
             minor=False if 'minor' not in event else event['minor']
