@@ -1,2 +1,2 @@
-mongo_uri: "mongodb://admin:qwerty@localhost:27020"
+mongo_uri: "mongodb://admin:qwerty@mongodb:27017"
 db_name: "wiki_analyzer"

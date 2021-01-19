@@ -8,7 +8,7 @@ from .mongo import setup as mongo_setup
 import logging
 
 from .utils import load_config
-from .handlers import handle_stream
+from .stream_handlers import StreamHandler
 
 PROJ_ROOT = Path(__file__).parent.parent
 logger = logging.getLogger(__name__)
@@ -16,7 +16,8 @@ ENV = os.getenv('ENV', 'debug').lower()
 
 
 async def start_background_tasks(app):
-    app['sse_listener'] = asyncio.create_task(handle_stream(app))
+    handler = StreamHandler(app)
+    app['sse_listener'] = asyncio.create_task(handler.handle_stream())
 
 
 async def cleanup_background_tasks(app):
