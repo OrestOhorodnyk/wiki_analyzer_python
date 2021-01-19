@@ -11,6 +11,8 @@ from app.user_contribytes_service import (
     get_most_active_user,
     get_user_list,
     topics_by_user,
+    topics_by_user_rx,
+    get_topic_typos_count,
 )
 from app.reactive import subject, to_agen
 
@@ -47,6 +49,18 @@ async def get_topics_by_user(username: str):
         })
 
     return result
+
+
+@router.get("/topics_by_user_rx/{username}", status_code=200)
+async def topics_by_user_and_title_rx(username: str):
+    topics = await topics_by_user_rx(username)
+
+    return topics
+
+
+@router.get("/topic_typos_rx", status_code=200)
+async def topics_typos():
+    return await get_topic_typos_count()
 
 
 @router.get("/most_active_user/")
