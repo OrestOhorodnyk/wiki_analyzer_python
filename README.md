@@ -26,7 +26,7 @@ CONTAINER ID   IMAGE                                         COMMAND            
 
 ```
 
-## streaming-service
+# Streaming-service
 
 
 ### Terminal websocket client
@@ -44,7 +44,7 @@ send  coma separated user list to start streaming
 eg ``GÜT,Fnielsen,Lettler,Hammersoft,Gamaliel,Lettler,Srich32977,Bdijkstra,Vahurzpu,Bdijkstra,Rar``
 
 
-## streaming-service
+# User-statistic-service
 
 ### 3 b. Topics to which user has contributed most
 eg `curl -X GET "http://0.0.0.0:8000/topics_by_user/PhiliPpe%20rogeZ" -H  "accept: application/json"`
