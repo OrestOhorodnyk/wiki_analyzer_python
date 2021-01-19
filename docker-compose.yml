@@ -12,27 +12,6 @@ services:
     ports:
       - "${MY_DOCKER_IP:-127.0.0.1}:5432:5432"
 
-  user-statistic-service:
-    depends_on:
-      - "timescaledb"
-    build:
-      context: ./user-statistic-service
-      dockerfile: Dockerfile
-    ports:
-      - "${MY_DOCKER_IP:-127.0.0.1}:8000:8000"
-
-    command: >
-      /bin/bash -c "
-        while ! nc -z wiki_analyzer_python_timescaledb_1 5432;
-        do
-          echo sleeping;
-          sleep 1;
-        done;
-        python3 -m app.main
-        echo Connected!;
-      "
-
-
   streaming-service:
     depends_on:
       - "timescaledb"
@@ -52,6 +31,28 @@ services:
         python3 -m app.main
         echo Connected!;
       "
+
+  user-statistic-service:
+    depends_on:
+      - "timescaledb"
+      - "streaming-service"
+    build:
+      context: ./user-statistic-service
+      dockerfile: Dockerfile
+    ports:
+      - "${MY_DOCKER_IP:-127.0.0.1}:8000:8000"
+
+    command: >
+      /bin/bash -c "
+        while ! nc -z wiki_analyzer_python_timescaledb_1 5432;
+        do
+          echo sleeping;
+          sleep 1;
+        done;
+        python3 -m app.main
+        echo Connected!;
+      "
+
 
   mongodb:
     image: mongo:4.0.8
