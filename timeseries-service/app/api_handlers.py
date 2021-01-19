@@ -1,8 +1,5 @@
-import asyncio
 from aiohttp import web
-from aiohttp.web import Application
 from pymongo.collection import Collection
-from .streem import get_stream
 from datetime import datetime
 import pymongo
 
@@ -66,6 +63,7 @@ class APIHandler:
 
         cursor = db.get_collection('recentchanges').aggregate(pipeline)
         data = []
+
         async for item in cursor:
             year = item['_id'].get('year', item['date'].year)
             month = item['_id'].get('month', item['date'].month)
@@ -78,35 +76,3 @@ class APIHandler:
             })
 
         return web.json_response({'data': data})
-
-
-async def handle_stream(app: Application):
-    try:
-        recentchanges_collection: Collection = app['mongo'].get_collection("recentchanges")
-        users_collection: Collection = app['mongo'].get_collection("users")
-
-        events = get_stream("https://stream.wikimedia.org/v2/stream/recentchange")
-
-        async for event in events:
-            await users_collection.update_one(
-                {"username": event['user']},
-                {
-                    "$setOnInsert": {"username": event['user']},
-                    "$inc": {"nchanges": 1},
-                },
-                upsert=True,
-            )
-            user_id = await users_collection.find_one({"username": event['user']})
-
-            date = datetime.fromisoformat(event['meta']['dt'].replace('Z', '+00:00')).replace(second=0, microsecond=0)
-
-            await recentchanges_collection.find_one_and_update(
-                {'d': date, 'u': user_id['_id']},
-                {
-                    "$setOnInsert": {"u": user_id['_id']},
-                    '$inc': {'_n': 1}
-                },
-                upsert=True
-            )
-    except asyncio.CancelledError:
-        pass

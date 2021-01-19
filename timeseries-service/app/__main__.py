@@ -4,7 +4,7 @@ from aiohttp import web
 import aiohttp_cors
 
 from .app import create_app
-from .handlers import APIHandler
+from .api_handlers import APIHandler
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Time-series service")
